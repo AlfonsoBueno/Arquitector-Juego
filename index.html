@@ -9,7 +9,12 @@
 <body>
   <div id="game-wrap">
     <canvas id="game" width="960" height="540"></canvas>
-    <div id="rotate-hint">↻ Gira el dispositivo en horizontal para jugar mejor</div>
+    <div id="touch-controls" aria-hidden="true">
+      <button id="btn-jump" class="tbtn" type="button"><span class="ic">⤒</span><span class="lb">SALTAR</span></button>
+      <button id="btn-shoot" class="tbtn" type="button"><span class="ic">🔫</span><span class="lb">DISPARAR</span></button>
+    </div>
+    <button id="btn-fs" type="button" title="Pantalla completa">⛶</button>
+    <div id="rotate-hint">↻ Gira el móvil en horizontal para jugar mejor</div>
   </div>
   <script src="game.js"></script>
 </body>

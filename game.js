@@ -192,6 +192,41 @@ canvas.addEventListener('touchstart', (e) => {
 }, { passive: false });
 canvas.addEventListener('touchend', (e) => { e.preventDefault(); releaseShoot(); }, { passive: false });
 
+// botones tactiles en pantalla (movil/tablet)
+const btnJump = document.getElementById('btn-jump');
+const btnShoot = document.getElementById('btn-shoot');
+const btnFs = document.getElementById('btn-fs');
+
+function bindButton(el, onDown, onUp) {
+  if (!el) return;
+  const down = (e) => { e.preventDefault(); e.stopPropagation(); el.classList.add('active'); onAnyAction(); onDown(); };
+  const up = (e) => { if (e) { e.preventDefault(); e.stopPropagation(); } el.classList.remove('active'); if (onUp) onUp(); };
+  el.addEventListener('pointerdown', down);
+  el.addEventListener('pointerup', up);
+  el.addEventListener('pointercancel', up);
+  el.addEventListener('pointerleave', up);
+  // respaldo tactil por si el navegador no soporta pointer events
+  el.addEventListener('touchstart', down, { passive: false });
+  el.addEventListener('touchend', up, { passive: false });
+}
+bindButton(btnJump, () => pressJump(), null);
+bindButton(btnShoot, () => pressShoot(), () => releaseShoot());
+
+if (btnFs) {
+  btnFs.addEventListener('click', (e) => {
+    e.preventDefault(); e.stopPropagation();
+    const el = document.documentElement;
+    if (!document.fullscreenElement) {
+      (el.requestFullscreen || el.webkitRequestFullscreen || (() => {})).call(el);
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('landscape').catch(() => {});
+      }
+    } else {
+      (document.exitFullscreen || document.webkitExitFullscreen || (() => {})).call(document);
+    }
+  });
+}
+
 // cualquier accion en TITLE/GAMEOVER avanza el estado
 function onAnyAction() {
   if (game.state === 'TITLE') startGame();
@@ -881,6 +916,7 @@ function loop(now) {
 }
 
 // ------------------------------------------------------------------ Arranque
+if (location.search.indexOf('touchui') >= 0) document.body.classList.add('force-touch');
 loadAssets(() => {
   setupPlayerScale();
   game.state = 'TITLE';
